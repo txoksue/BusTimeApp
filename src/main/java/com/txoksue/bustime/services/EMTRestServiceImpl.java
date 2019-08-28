@@ -81,6 +81,8 @@ public class EMTRestServiceImpl implements EMTRestService {
 				
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 				
+				logger.error(bodyAsString);
+				
 				ResponseTokenData tokenData = new ObjectMapper().readValue(bodyAsString, ResponseTokenData.class);
 				
 				client.close();
@@ -90,6 +92,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 			
 		} catch (IOException e) {
 		
+			System.out.println("Error getting bus time data.");
 			logger.error("Error getting token.");
 			throw new TimeBusException("Error");
 		} 
@@ -182,6 +185,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 		    
 		} catch (IOException e) {
 			
+			System.out.println("Error getting bus time data.");
 			logger.error("Error getting bus time data.");
 			throw new TimeBusException("Error");
 		}
