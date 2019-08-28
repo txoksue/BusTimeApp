@@ -1,5 +1,7 @@
 package com.txoksue.bustime.handler;
 
+import static com.amazon.ask.request.Predicates.requestType;
+
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,7 +11,6 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.LaunchRequest;
 import com.amazon.ask.model.Response;
-import static com.amazon.ask.request.Predicates.requestType;
 
 public class LaunchRequestHandler implements RequestHandler {
 	
@@ -25,7 +26,7 @@ public class LaunchRequestHandler implements RequestHandler {
 		
 		String repromptText = "";
 		String text = "Bienvenido a Tiempo bus. ¿En qué puedo ayudarte?";
-		return input.getResponseBuilder().withSpeech(text).withReprompt("Hola").build();
+		return input.getResponseBuilder().withSpeech(text).withReprompt("Hola").withShouldEndSession(false).build();
 
 	}
 
