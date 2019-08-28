@@ -3,13 +3,11 @@ package com.txoksue.bustime.handler;
 import static com.amazon.ask.request.Predicates.intentName;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
@@ -21,11 +19,11 @@ import com.txoksue.bustime.services.EMTRestService;
 import com.txoksue.bustime.services.EMTRestServiceImpl;
 
 public class BusTimeIntentHandler implements RequestHandler {
-	
+
 	private static final Logger logger = LogManager.getLogger(BusTimeIntentHandler.class);
 
 	private EMTRestService emtRestService = new EMTRestServiceImpl();
-	
+
 	private static final String SPEECH_ERROR = "Ahora mismo no te puedo ayudar. Alguien ha pisado un cable";
 
 	@Override
@@ -36,43 +34,43 @@ public class BusTimeIntentHandler implements RequestHandler {
 	@Override
 	public Optional<Response> handle(HandlerInput input) {
 
-		ResponseEntity<String> responseToken = emtRestService.getAccessToken();
+		try {
+			
+			String responseToken = emtRestService.getAccessToken();
 
-		if (responseToken.getStatusCode().equals(HttpStatus.OK)) {
+			if (Objects.nonNull(responseToken)) {
 
-			ResponseEntity<ResponseBusTimeData> responseTimeBus = null;
+				ResponseBusTimeData responseTimeBus = null;
 
-			try {
+				logger.info("Token: {}", responseToken);
 
-				logger.info("Token: {}",responseToken.getBody());
+				responseTimeBus = emtRestService.getTimeBus(responseToken);
 
-				responseTimeBus = emtRestService.getTimeBus(responseToken.getBody());
+				if (Objects.nonNull(responseTimeBus)) {
 
-				if (responseTimeBus.getStatusCode().equals(HttpStatus.OK)) {
+					List<BusTimeInfo> resp = responseTimeBus.getData().get(0).getBusTimes();
 
-					List<BusTimeInfo> resp = responseTimeBus.getBody().getData().get(0).getBusTimes();
-					
 					String bus = resp.get(0).getBus();
-					
+
 					logger.info("INFORMACION RECUPERADA");
-					logger.info(StringUtils.arrayToCommaDelimitedString(resp.toArray()));
-					
-					String speechText = "Este es el bus " + bus;
-					return input.getResponseBuilder().withSpeech(speechText).withSimpleCard("BusApp", speechText).build();
+
+					String speechText = "Este es el bus con variables de entorno " + bus;
+					return input.getResponseBuilder().withSpeech(speechText).withReprompt("¿Necesitas mas ayuda?")
+							.withSimpleCard("BusApp", speechText).build();
 
 				} else {
 
 					logger.error("No se ha podido recuperar la información sobre el bus.");
 				}
 
-			} catch (TimeBusException e) {
+			} else {
 
-				logger.error(e.getMessage());
+				logger.error("No se ha podido recuperar un token.");
 			}
 
-		} else {
+		} catch (TimeBusException e) {
 
-			logger.error("No se ha podido recuperar un token.");
+			logger.error(e.getMessage());
 		}
 
 		return input.getResponseBuilder().withSpeech(SPEECH_ERROR).withSimpleCard("BusApp", SPEECH_ERROR).build();
