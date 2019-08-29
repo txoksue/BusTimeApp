@@ -2,12 +2,17 @@ package com.txoksue.bustime.handler;
 
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import static com.amazon.ask.request.Predicates.intentName;
 import com.amazon.ask.model.Response;
 
 public class CancelandStopIntentHandler implements RequestHandler {
+	
+	private static final Logger logger = LogManager.getLogger(CancelandStopIntentHandler.class);
 
 	@Override
 	public boolean canHandle(HandlerInput input) {
@@ -16,8 +21,11 @@ public class CancelandStopIntentHandler implements RequestHandler {
 
 	@Override
 	public Optional<Response> handle(HandlerInput input) {
-		String speechText = "Venga hasta luego";
-		return input.getResponseBuilder().withSpeech(speechText).withSimpleCard("BusApp", speechText).build();
+		
+		logger.info("Managing cancel and stop request.");
+		
+		String speechText = "Venga, hasta luego.";
+		return input.getResponseBuilder().withSpeech(speechText).withShouldEndSession(true).withSimpleCard("BusApp", speechText).build();
 	}
 
 }
