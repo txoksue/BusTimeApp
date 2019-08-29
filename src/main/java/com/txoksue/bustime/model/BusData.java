@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ResponseBusTimeData {
+public class BusData {
 
 	@JsonProperty("data")
 	private List<ArriveInfo> data;

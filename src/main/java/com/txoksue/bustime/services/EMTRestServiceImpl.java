@@ -20,8 +20,8 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.txoksue.bustime.exception.TimeBusException;
-import com.txoksue.bustime.model.ResponseBusTimeData;
-import com.txoksue.bustime.model.ResponseTokenData;
+import com.txoksue.bustime.model.BusData;
+import com.txoksue.bustime.model.TokenData;
 
 
 public class EMTRestServiceImpl implements EMTRestService {
@@ -81,9 +81,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 				
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 				
-				logger.error(bodyAsString);
-				
-				ResponseTokenData tokenData = new ObjectMapper().readValue(bodyAsString, ResponseTokenData.class);
+				TokenData tokenData = new ObjectMapper().readValue(bodyAsString, TokenData.class);
 				
 				client.close();
 				
@@ -92,7 +90,6 @@ public class EMTRestServiceImpl implements EMTRestService {
 			
 		} catch (IOException e) {
 		
-			System.out.println("Error getting bus time data.");
 			logger.error("Error getting token.");
 			throw new TimeBusException("Error");
 		} 
@@ -101,7 +98,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 	}
 
 	@Override
-	public ResponseBusTimeData getTimeBus(String accessToken) throws TimeBusException {
+	public BusData getTimeBus(String accessToken) throws TimeBusException {
 
 //		HttpHeaders headers = new HttpHeaders();
 //
@@ -174,7 +171,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 				
-				ResponseBusTimeData busTimeData = new ObjectMapper().readValue(bodyAsString, ResponseBusTimeData.class);
+				BusData busTimeData = new ObjectMapper().readValue(bodyAsString, BusData.class);
 				
 				client.close();
 				
@@ -185,7 +182,6 @@ public class EMTRestServiceImpl implements EMTRestService {
 		    
 		} catch (IOException e) {
 			
-			System.out.println("Error getting bus time data.");
 			logger.error("Error getting bus time data.");
 			throw new TimeBusException("Error");
 		}

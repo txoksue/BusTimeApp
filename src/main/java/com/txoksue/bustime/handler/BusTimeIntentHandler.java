@@ -13,8 +13,8 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.Response;
 import com.txoksue.bustime.exception.TimeBusException;
-import com.txoksue.bustime.model.BusTimeInfo;
-import com.txoksue.bustime.model.ResponseBusTimeData;
+import com.txoksue.bustime.model.ArriveBusTime;
+import com.txoksue.bustime.model.BusData;
 import com.txoksue.bustime.services.EMTRestService;
 import com.txoksue.bustime.services.EMTRestServiceImpl;
 
@@ -40,7 +40,7 @@ public class BusTimeIntentHandler implements RequestHandler {
 
 			if (Objects.nonNull(responseToken)) {
 
-				ResponseBusTimeData responseTimeBus = null;
+				BusData responseTimeBus = null;
 
 				logger.info("Token: {}", responseToken);
 
@@ -48,7 +48,7 @@ public class BusTimeIntentHandler implements RequestHandler {
 
 				if (Objects.nonNull(responseTimeBus)) {
 
-					List<BusTimeInfo> resp = responseTimeBus.getData().get(0).getBusTimes();
+					List<ArriveBusTime> resp = responseTimeBus.getData().get(0).getBusTimes();
 
 					String bus = resp.get(0).getBus();
 

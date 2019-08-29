@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @NoArgsConstructor
-public class BusTimeInfo {
+public class ArriveBusTime {
 	
 	@JsonProperty
-	private Integer DistanceBus;
+	private Integer distanceBus;
 	
 	@JsonProperty
 	private Object geometry;
@@ -84,11 +84,11 @@ public class BusTimeInfo {
 
 	@JsonGetter
 	public Integer getDistanceBus() {
-		return DistanceBus;
+		return distanceBus;
 	}
 
 	public void setDistanceBus(Integer distanceBus) {
-		DistanceBus = distanceBus;
+		this.distanceBus = distanceBus;
 	}
 
 	@JsonGetter

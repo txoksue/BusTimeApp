@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 public class ArriveInfo {
 	
 	@JsonProperty("Arrive")
-	private List<BusTimeInfo> busTimes;
+	private List<ArriveBusTime> busTimes;
 
-	public List<BusTimeInfo> getBusTimes() {
+	public List<ArriveBusTime> getBusTimes() {
 		return busTimes;
 	}
 
-	public void setBusTimes(List<BusTimeInfo> busTimes) {
+	public void setBusTimes(List<ArriveBusTime> busTimes) {
 		this.busTimes = busTimes;
 	}
 	
