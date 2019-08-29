@@ -3,12 +3,14 @@ package com.txoksue.bustime.handler;
 import static com.amazon.ask.request.Predicates.intentName;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.amazon.ask.attributes.AttributesManager;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.Response;
@@ -17,6 +19,8 @@ import com.txoksue.bustime.model.ArriveBusTime;
 import com.txoksue.bustime.model.BusData;
 import com.txoksue.bustime.services.EMTRestService;
 import com.txoksue.bustime.services.EMTRestServiceImpl;
+import com.txoksue.bustime.services.SpeechService;
+import com.txoksue.bustime.services.SpeechServiceImpl;
 
 public class BusTimeIntentHandler implements RequestHandler {
 
@@ -24,7 +28,9 @@ public class BusTimeIntentHandler implements RequestHandler {
 
 	private EMTRestService emtRestService = new EMTRestServiceImpl();
 
-	private static final String SPEECH_ERROR = "Ahora mismo no te puedo ayudar. Alguien ha pisado un cable";
+	private SpeechService speechService = new SpeechServiceImpl();
+
+	private static final String SPEECH_ERROR = "Ahora mismo no te puedo ayudar. Alguien ha pisado un cable.";
 
 	@Override
 	public boolean canHandle(HandlerInput input) {
@@ -34,38 +40,36 @@ public class BusTimeIntentHandler implements RequestHandler {
 	@Override
 	public Optional<Response> handle(HandlerInput input) {
 
+		AttributesManager attributesManager = input.getAttributesManager();
+
+		Map<String, Object> sessionAttributes = attributesManager.getSessionAttributes();
+
+		String accessToken = (String) sessionAttributes.get("accessToken");
+		
+		logger.info("Token from session attributes: {}", accessToken);
+
 		try {
-			
-			String responseToken = emtRestService.getAccessToken();
 
-			if (Objects.nonNull(responseToken)) {
+			BusData timeBusData = emtRestService.getTimeBus(accessToken);
 
-				BusData responseTimeBus = null;
+			if (Objects.nonNull(timeBusData)) {
 
-				logger.info("Token: {}", responseToken);
+				logger.info("INFORMACION RECUPERADA");
 
-				responseTimeBus = emtRestService.getTimeBus(responseToken);
+				List<ArriveBusTime> resp = timeBusData.getData().get(0).getBusTimes();
 
-				if (Objects.nonNull(responseTimeBus)) {
+				logger.info("Estimate arrive object: {}", resp.get(0).toString());
 
-					List<ArriveBusTime> resp = responseTimeBus.getData().get(0).getBusTimes();
+				String speechText = speechService.getSpeechEstimateArrive(resp.get(0));
 
-					String bus = resp.get(0).getBus();
+				logger.info(speechText);
 
-					logger.info("INFORMACION RECUPERADA");
-
-					String speechText = "Este es el bus con variables de entorno " + bus;
-					return input.getResponseBuilder().withSpeech(speechText).withReprompt("¿Necesitas mas ayuda?")
-							.withSimpleCard("BusApp", speechText).build();
-
-				} else {
-
-					logger.error("No se ha podido recuperar la información sobre el bus.");
-				}
+				return input.getResponseBuilder().withSpeech(speechText).withReprompt("¿Necesitas más ayuda?")
+						.withSimpleCard("BusApp", speechText).build();
 
 			} else {
 
-				logger.error("No se ha podido recuperar un token.");
+				logger.error("No se ha podido recuperar la información sobre el bus.");
 			}
 
 		} catch (TimeBusException e) {
