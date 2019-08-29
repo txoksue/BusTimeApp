@@ -91,7 +91,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 		} catch (IOException e) {
 		
 			logger.error("Error getting token.");
-			throw new TimeBusException("Error");
+			throw new TimeBusException(e);
 		} 
 		
 		return null;
