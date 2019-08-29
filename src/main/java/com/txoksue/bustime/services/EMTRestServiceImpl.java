@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -38,31 +39,10 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 	private String accessTokenUrl = "https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/";
 
-	private String timeBusUrl = "https://openapi.emtmadrid.es/v2/transport/busemtmad/stops/1912/arrives/5/";
-
-//	private RestTemplate restTemplate = new RestTemplate();
+	private String timeBusUrl = "https://openapi.emtmadrid.es/v2/transport/busemtmad/stops/955/arrives/175/";
 
 	@Override
 	public String getAccessToken() throws TimeBusException {
-
-//		HttpHeaders headers = new HttpHeaders();
-//
-//		headers.add("email", System.getenv("email"));
-//		headers.add("password", System.getenv("password"));
-//		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
-
-//		final HttpEntity<String> entity = new HttpEntity<>(headers);
-
-//		ResponseEntity<ResponseTokenData> response = restTemplate.exchange(accessTokenUrl, HttpMethod.GET, entity,
-//				new ParameterizedTypeReference<ResponseTokenData>() {
-//				});
-
-//		if (response.getBody().getUsers().get(0).getAccessToken() != null) {
-//
-//			return ResponseEntity.ok().body(response.getBody().getUsers().get(0).getAccessToken());
-//		}
-//
-//		return ResponseEntity.noContent().build();
 		
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		
@@ -77,7 +57,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 			
 			HttpResponse response = client.execute(request);
 			
-			if (response.getStatusLine().getStatusCode() == 200) {
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 				
@@ -99,42 +79,6 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 	@Override
 	public BusData getTimeBus(String accessToken) throws TimeBusException {
-
-//		HttpHeaders headers = new HttpHeaders();
-//
-//		headers.add("accessToken", accessToken);
-//		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-//
-//		JSONObject jsonObject = null;
-//
-//		try {
-//
-//			jsonObject = new JSONObject();
-//			jsonObject.put("cultureInfo", cultureInfo);
-//			jsonObject.put("Text_StopRequired_YN", stopRequired);
-//			jsonObject.put("Text_EstimationsRequired_YN", estimationsRequired);
-//			jsonObject.put("Text_IncidencesRequired_YN", incidencesRequired);
-//			jsonObject.put("TateTime_Referenced_Incidencies_YYYYMMDD", "20190715");
-//
-//		} catch (JSONException e) {
-//
-//			throw new TimeBusException("Error parsing json object.");
-//		}
-//
-//		final HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
-//
-//		ResponseEntity<ResponseBusTimeData> response = restTemplate.exchange(timeBusUrl, HttpMethod.POST, entity,
-//				new ParameterizedTypeReference<ResponseBusTimeData>() {});
-//
-//		// Cogemos la posicion 0 porque es donde esta el objeto con
-//		// los datos del bus
-//		if (response.getBody().getData().get(0).getBusTimes() != null) {
-//
-//			return ResponseEntity.ok().body(response.getBody());
-//		}
-//
-//
-//		return ResponseEntity.noContent().build();
 		
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		
@@ -167,7 +111,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 		    
 		    CloseableHttpResponse response = client.execute(httpPost);
 			
-			if (response.getStatusLine().getStatusCode() == 200) {
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 				
