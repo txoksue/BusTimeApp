@@ -1,18 +1,21 @@
 package com.txoksue.bustime.services;
 
 import java.io.InputStream;
-import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+
+import com.txoksue.bustime.model.BusInfoProperties;
+
 
 public class LoadYamlServiceImpl implements LoadYamlService {
 
 	@Override
-	public Map<String, Object> load() {
+	public BusInfoProperties loadBusInfo() {
 		
-		Yaml yaml = new Yaml();
+		Yaml yaml = new Yaml(new Constructor(BusInfoProperties.class));
 		
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("properties.yml");
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("resources/properties.yml");
 		
 		return yaml.load(inputStream);
 	}

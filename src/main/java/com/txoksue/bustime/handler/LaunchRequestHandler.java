@@ -15,6 +15,7 @@ import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.LaunchRequest;
 import com.amazon.ask.model.Response;
 import com.txoksue.bustime.exception.TimeBusException;
+import com.txoksue.bustime.model.BusInfoProperties;
 import com.txoksue.bustime.services.EMTRestService;
 import com.txoksue.bustime.services.EMTRestServiceImpl;
 import com.txoksue.bustime.services.LoadYamlService;
@@ -43,11 +44,11 @@ public class LaunchRequestHandler implements RequestHandler {
 		AttributesManager attributesManager = input.getAttributesManager();
 		Map<String, Object> sessionAttributes = attributesManager.getSessionAttributes();
 		
-		Map<String, Object> yamlProperties = loadYamlService.load();
+		BusInfoProperties busPoperties = loadYamlService.loadBusInfo();
 		
-		logger.info(yamlProperties);
+		logger.info(busPoperties.toString());
 		
-		sessionAttributes.put("properties", yamlProperties);
+		sessionAttributes.put("properties", busPoperties);
 
 		try {
 

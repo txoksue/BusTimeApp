@@ -1,9 +1,9 @@
 package com.txoksue.bustime.services;
 
-import java.util.Map;
+import com.txoksue.bustime.model.BusInfoProperties;
 
 public interface LoadYamlService {
 	
-	Map<String, Object> load();
+	BusInfoProperties loadBusInfo();
 
 }
