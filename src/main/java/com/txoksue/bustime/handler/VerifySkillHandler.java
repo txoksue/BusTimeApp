@@ -8,7 +8,7 @@ public class VerifySkillHandler extends SkillStreamHandler {
 	
 	//Forcing to load the logging file configuration lambda-log4j2.xml
 	static {
-	    System.setProperty("log4j.configurationFile", "lambda-log4j2.xml");
+	    System.setProperty("log4j.configurationFile", "resources/lambda-log4j2.xml");
 	}
 
 	private static Skill getSkill() {
