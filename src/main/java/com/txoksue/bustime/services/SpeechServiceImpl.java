@@ -23,7 +23,7 @@ public class SpeechServiceImpl implements SpeechService {
 		
 		}else {
 			
-			speechText = "¡Lo has perdido!. La próxima vez ¡muévete más rápido!.";
+			speechText = "¡Lo has perdido!. La próxima vez muévete más rápido.";
 		}
 		
 		return speechText;

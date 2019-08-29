@@ -24,7 +24,7 @@ public class CancelandStopIntentHandler implements RequestHandler {
 		
 		logger.info("Managing cancel and stop request.");
 		
-		String speechText = "Venga, hasta luego.";
+		String speechText = "Venga hasta luego.";
 		return input.getResponseBuilder().withSpeech(speechText).withShouldEndSession(true).withSimpleCard("BusApp", speechText).build();
 	}
 
