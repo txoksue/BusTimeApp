@@ -11,21 +11,5 @@ import lombok.ToString;
 @ToString
 public class BusInfoProperties {
 
-	private Integer number;
-	private List<Integer> stops;
-	
-	public Integer getNumber() {
-		return number;
-	}
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
-	public List<Integer> getStops() {
-		return stops;
-	}
-	public void setStops(List<Integer> stops) {
-		this.stops = stops;
-	}
-	
-	
+	private List<Bus> bus;
 }
