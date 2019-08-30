@@ -1,5 +1,10 @@
 
-number: 175
-stops:
-  - 955
-  - 3670
+bus: 
+  - number: 175
+    stops:
+     - 955
+     - 3670
+  - number: 178
+    stops:
+     - 955
+  
