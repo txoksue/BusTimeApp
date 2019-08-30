@@ -12,8 +12,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.amazon.ask.attributes.AttributesManager;
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
-import com.amazon.ask.dispatcher.request.handler.RequestHandler;
+import com.amazon.ask.dispatcher.request.handler.impl.IntentRequestHandler;
+import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
+import com.amazon.ask.request.RequestHelper;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.ArriveBusTime;
 import com.txoksue.bustime.model.BusData;
@@ -22,7 +24,7 @@ import com.txoksue.bustime.services.EMTRestServiceImpl;
 import com.txoksue.bustime.services.SpeechService;
 import com.txoksue.bustime.services.SpeechServiceImpl;
 
-public class BusTimeIntentHandler implements RequestHandler {
+public class BusTimeIntentHandler implements IntentRequestHandler {
 
 	private static final Logger logger = LogManager.getLogger(BusTimeIntentHandler.class);
 
@@ -33,12 +35,12 @@ public class BusTimeIntentHandler implements RequestHandler {
 	private static final String SPEECH_ERROR = "Ahora mismo no te puedo ayudar. Alguien ha pisado un cable.";
 
 	@Override
-	public boolean canHandle(HandlerInput input) {
+	public boolean canHandle(HandlerInput input, IntentRequest intentRequest) {
 		return input.matches(intentName("BusTimeIntent"));
 	}
 
 	@Override
-	public Optional<Response> handle(HandlerInput input) {
+	public Optional<Response> handle(HandlerInput input, IntentRequest intentRequest) {
 
 		AttributesManager attributesManager = input.getAttributesManager();
 
@@ -48,12 +50,16 @@ public class BusTimeIntentHandler implements RequestHandler {
 		
 		logger.info("Token from session attributes: {}", accessToken);
 
+	    RequestHelper requestHelper = RequestHelper.forHandlerInput(input);
+	        
+	    Optional<String> busNumber = requestHelper.getSlotValue("bus_number");
+
 		try {
-
+			
 			BusData timeBusData = emtRestService.getTimeBus(accessToken);
-
+			
 			if (Objects.nonNull(timeBusData)) {
-
+				
 				logger.info("INFORMACION RECUPERADA");
 
 				List<ArriveBusTime> resp = timeBusData.getData().get(0).getBusTimes();
