@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.BusData;
+import com.txoksue.bustime.model.BusInfoProperties;
 import com.txoksue.bustime.model.TokenData;
 
 
@@ -81,29 +82,14 @@ public class EMTRestServiceImpl implements EMTRestService {
 	public BusData getTimeBus(String accessToken) throws TimeBusException {
 		
 		CloseableHttpClient client = HttpClientBuilder.create().build();
+
+		HttpPost httpPost = new HttpPost(timeBusUrl);
 		
-		JSONObject jsonObject = null;
+		JSONObject bodyRequest = getBodyRequest();
 
 		try {
 
-			jsonObject = new JSONObject();
-			jsonObject.put("cultureInfo", cultureInfo);
-			jsonObject.put("Text_StopRequired_YN", stopRequired);
-			jsonObject.put("Text_EstimationsRequired_YN", estimationsRequired);
-			jsonObject.put("Text_IncidencesRequired_YN", incidencesRequired);
-			jsonObject.put("TateTime_Referenced_Incidencies_YYYYMMDD", "20190715");
-
-		} catch (JSONException e) {
-
-			throw new TimeBusException("Error parsing json object.");
-		}
-
-		
-		try {
-			
-			HttpPost httpPost = new HttpPost(timeBusUrl);
-			 
-		    StringEntity entity = new StringEntity(jsonObject.toString());
+			StringEntity entity = new StringEntity(bodyRequest.toString());
 		    httpPost.setEntity(entity);
 		    
 		    httpPost.setHeader("accessToken", accessToken);
@@ -121,9 +107,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 				
 				return busTimeData;
 			}
-
-		    
-		    
+  
 		} catch (IOException e) {
 			
 			logger.error("Error getting bus time data.");
@@ -132,6 +116,69 @@ public class EMTRestServiceImpl implements EMTRestService {
 	    
 		return null;
 		
+	}
+	
+	
+	@Override
+	public BusData getTimeBus(String accessToken, BusInfoProperties busInfo) throws TimeBusException {
+		
+		CloseableHttpClient client = HttpClientBuilder.create().build();
+
+		HttpPost httpPost = new HttpPost(timeBusUrl);
+		
+		JSONObject bodyRequest = getBodyRequest();
+
+		try {
+
+			StringEntity entity = new StringEntity(bodyRequest.toString());
+		    httpPost.setEntity(entity);
+		    
+		    httpPost.setHeader("accessToken", accessToken);
+		    httpPost.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+		    
+		    CloseableHttpResponse response = client.execute(httpPost);
+			
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+
+				String bodyAsString = EntityUtils.toString(response.getEntity());
+				
+				BusData busTimeData = new ObjectMapper().readValue(bodyAsString, BusData.class);
+				
+				client.close();
+				
+				return busTimeData;
+			}
+  
+		} catch (IOException e) {
+			
+			logger.error("Error getting bus time data.");
+			throw new TimeBusException("Error");
+		}
+	    
+		return null;
+		
+	}
+	
+	
+	private JSONObject getBodyRequest() throws TimeBusException {
+		
+		JSONObject bodyRequest = null;
+
+		try {
+
+			bodyRequest = new JSONObject();
+			bodyRequest.put("cultureInfo", cultureInfo);
+			bodyRequest.put("Text_StopRequired_YN", stopRequired);
+			bodyRequest.put("Text_EstimationsRequired_YN", estimationsRequired);
+			bodyRequest.put("Text_IncidencesRequired_YN", incidencesRequired);
+			bodyRequest.put("TateTime_Referenced_Incidencies_YYYYMMDD", "20190715");
+
+		} catch (JSONException e) {
+
+			throw new TimeBusException("Error parsing json object for body request.");
+		}
+
+		return bodyRequest;
 	}
 
 }
