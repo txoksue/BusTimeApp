@@ -7,9 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
+@ToString
 public class BusData {
 
 	@JsonProperty("data")
