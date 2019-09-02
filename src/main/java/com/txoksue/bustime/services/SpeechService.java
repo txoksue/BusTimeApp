@@ -7,5 +7,5 @@ import com.txoksue.bustime.model.BusData;
 public interface SpeechService {
 
 	
-	String getSpeechEstimateArrive(List<BusData> timesBusData);
+	String buildSpeechEstimateArrive(List<BusData> timesBusData);
 }

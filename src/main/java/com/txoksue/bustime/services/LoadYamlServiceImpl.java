@@ -15,7 +15,7 @@ public class LoadYamlServiceImpl implements LoadYamlService {
 		
 		Yaml yaml = new Yaml(new Constructor(BusInfoProperties.class));
 		
-		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("resources/properties.yml");
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("properties.yml");
 		
 		return yaml.load(inputStream);
 	}
