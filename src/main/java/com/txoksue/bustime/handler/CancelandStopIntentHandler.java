@@ -22,10 +22,10 @@ public class CancelandStopIntentHandler implements RequestHandler {
 	@Override
 	public Optional<Response> handle(HandlerInput input) {
 		
-		logger.info("Managing cancel and stop request.");
+		logger.info("Handling CancelandStopIntent.");
 		
 		String speechText = "Venga hasta luego.";
-		return input.getResponseBuilder().withSpeech(speechText).withShouldEndSession(true).withSimpleCard("BusApp", speechText).build();
+		return input.getResponseBuilder().withSpeech(speechText).withShouldEndSession(true).build();
 	}
 
 }
