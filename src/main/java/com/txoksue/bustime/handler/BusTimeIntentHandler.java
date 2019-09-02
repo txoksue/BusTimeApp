@@ -2,6 +2,9 @@ package com.txoksue.bustime.handler;
 
 import static com.amazon.ask.request.Predicates.intentName;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,11 +19,13 @@ import com.amazon.ask.dispatcher.request.handler.impl.IntentRequestHandler;
 import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.request.RequestHelper;
+import com.txoksue.bustime.api.EMTRestService;
+import com.txoksue.bustime.api.EMTRestServiceImpl;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.ArriveBusTime;
+import com.txoksue.bustime.model.Bus;
 import com.txoksue.bustime.model.BusData;
-import com.txoksue.bustime.services.EMTRestService;
-import com.txoksue.bustime.services.EMTRestServiceImpl;
+import com.txoksue.bustime.model.BusInfoProperties;
 import com.txoksue.bustime.services.SpeechService;
 import com.txoksue.bustime.services.SpeechServiceImpl;
 
@@ -47,26 +52,48 @@ public class BusTimeIntentHandler implements IntentRequestHandler {
 		Map<String, Object> sessionAttributes = attributesManager.getSessionAttributes();
 
 		String accessToken = (String) sessionAttributes.get("accessToken");
-		
+
 		logger.info("Token from session attributes: {}", accessToken);
 
-	    RequestHelper requestHelper = RequestHelper.forHandlerInput(input);
-	        
-	    Optional<String> busNumber = requestHelper.getSlotValue("bus_number");
+		RequestHelper requestHelper = RequestHelper.forHandlerInput(input);
 
-		try {
+		Optional<String> busNumber = requestHelper.getSlotValue("bus_number");
+		
+		logger.info("Slot: {}", busNumber.get());
+
+		if (busNumber.isPresent()) {
 			
-			BusData timeBusData = emtRestService.getTimeBus(accessToken);
-			
-			if (Objects.nonNull(timeBusData)) {
-				
+			logger.info("Slot: {}", busNumber.get());
+
+			BusInfoProperties busInfoProperties = (BusInfoProperties) sessionAttributes.get("busInfoProperties");
+
+			Optional<Bus> bus = busInfoProperties.getBus().stream()
+					.filter(b -> b.getNumber() == Integer.valueOf(busNumber.get())).findFirst();
+
+			List<BusData> timesBusData = new ArrayList<>();
+
+			bus.get().getStops().forEach(s -> {
+
+				BusData timeBus;
+
+				try {
+
+					timeBus = emtRestService.getTimeArrivalBus(accessToken, s, bus.get().getNumber());
+
+					timesBusData.add(timeBus);
+
+				} catch (TimeBusException e) {
+
+					logger.error(e.getMessage());		
+				}
+
+			});
+
+			if (Objects.nonNull(timesBusData) && !timesBusData.isEmpty()) {
+
 				logger.info("INFORMACION RECUPERADA");
 
-				List<ArriveBusTime> resp = timeBusData.getData().get(0).getBusTimes();
-
-				logger.info("Estimate arrive object: {}", resp.get(0).toString());
-
-				String speechText = speechService.getSpeechEstimateArrive(resp.get(0));
+				String speechText = speechService.getSpeechEstimateArrive(timesBusData);
 
 				logger.info(speechText);
 
@@ -77,13 +104,8 @@ public class BusTimeIntentHandler implements IntentRequestHandler {
 
 				logger.error("No se ha podido recuperar la información sobre el bus.");
 			}
-
-		} catch (TimeBusException e) {
-
-			logger.error(e.getMessage());
 		}
 
 		return input.getResponseBuilder().withSpeech(SPEECH_ERROR).withSimpleCard("BusApp", SPEECH_ERROR).build();
 	}
-
 }

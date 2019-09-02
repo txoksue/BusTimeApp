@@ -14,10 +14,10 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.LaunchRequest;
 import com.amazon.ask.model.Response;
+import com.txoksue.bustime.api.EMTRestService;
+import com.txoksue.bustime.api.EMTRestServiceImpl;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.BusInfoProperties;
-import com.txoksue.bustime.services.EMTRestService;
-import com.txoksue.bustime.services.EMTRestServiceImpl;
 import com.txoksue.bustime.services.LoadYamlService;
 import com.txoksue.bustime.services.LoadYamlServiceImpl;
 
@@ -48,7 +48,7 @@ public class LaunchRequestHandler implements RequestHandler {
 		
 		logger.info(busPoperties.toString());
 		
-		sessionAttributes.put("properties", busPoperties);
+		sessionAttributes.put("busInfoProperties", busPoperties);
 
 		try {
 

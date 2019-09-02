@@ -1,9 +1,11 @@
 package com.txoksue.bustime.services;
 
-import com.txoksue.bustime.model.ArriveBusTime;
+import java.util.List;
+
+import com.txoksue.bustime.model.BusData;
 
 public interface SpeechService {
 
 	
-	String getSpeechEstimateArrive(ArriveBusTime arrive);
+	String getSpeechEstimateArrive(List<BusData> timesBusData);
 }

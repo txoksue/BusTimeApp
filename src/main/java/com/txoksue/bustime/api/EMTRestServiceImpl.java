@@ -1,4 +1,4 @@
-package com.txoksue.bustime.services;
+package com.txoksue.bustime.api;
 
 import java.io.IOException;
 
@@ -22,9 +22,7 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.BusData;
-import com.txoksue.bustime.model.BusInfoProperties;
 import com.txoksue.bustime.model.TokenData;
-
 
 public class EMTRestServiceImpl implements EMTRestService {
 
@@ -40,128 +38,83 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 	private String accessTokenUrl = "https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/";
 
-	private String timeBusUrl = "https://openapi.emtmadrid.es/v2/transport/busemtmad/stops/955/arrives/175/";
+	private String timeBusUrl = "https://openapi.emtmadrid.es/v2/transport/busemtmad/stops/{stop}/arrives/{bus}/";
 
 	@Override
 	public String getAccessToken() throws TimeBusException {
-		
+
 		CloseableHttpClient client = HttpClientBuilder.create().build();
-		
-		HttpUriRequest request = RequestBuilder.get()
-				  .setUri(accessTokenUrl)
-				  .setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-				  .setHeader("email", System.getenv("email"))
-				  .setHeader("password", System.getenv("password"))
-				  .build();
+
+		HttpUriRequest request = RequestBuilder.get().setUri(accessTokenUrl)
+				.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+				.setHeader("email", System.getenv("email")).setHeader("password", System.getenv("password")).build();
 
 		try {
-			
+
 			HttpResponse response = client.execute(request);
-			
+
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				
+
 				String bodyAsString = EntityUtils.toString(response.getEntity());
-				
+
 				TokenData tokenData = new ObjectMapper().readValue(bodyAsString, TokenData.class);
-				
+
 				client.close();
-				
+
 				return tokenData.getUsers().get(0).getAccessToken();
 			}
-			
+
 		} catch (IOException e) {
-		
+
 			logger.error("Error getting token.");
 			throw new TimeBusException(e);
-		} 
-		
+		}
+
 		return null;
 	}
 
 	@Override
-	public BusData getTimeBus(String accessToken) throws TimeBusException {
-		
+	public BusData getTimeArrivalBus(String accessToken, Integer stop, Integer busNumber) throws TimeBusException {
+
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 
-		HttpPost httpPost = new HttpPost(timeBusUrl);
-		
-		JSONObject bodyRequest = getBodyRequest();
+		HttpPost httpPost = new HttpPost(timeBusUrl.replace("{stop}", String.valueOf(stop).replace("{bus}", String.valueOf(busNumber))));
 
 		try {
 
+			JSONObject bodyRequest = getBodyRequest();
+
 			StringEntity entity = new StringEntity(bodyRequest.toString());
-		    httpPost.setEntity(entity);
-		    
-		    httpPost.setHeader("accessToken", accessToken);
-		    httpPost.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-		    
-		    CloseableHttpResponse response = client.execute(httpPost);
-			
+			httpPost.setEntity(entity);
+
+			httpPost.setHeader("accessToken", accessToken);
+			httpPost.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+
+			CloseableHttpResponse response = client.execute(httpPost);
+
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
 				String bodyAsString = EntityUtils.toString(response.getEntity());
-				
+
 				BusData busTimeData = new ObjectMapper().readValue(bodyAsString, BusData.class);
-				
+
 				client.close();
 				
 				return busTimeData;
 			}
-  
-		} catch (IOException e) {
-			
+
+		} catch (IOException | TimeBusException e) {
+
 			logger.error("Error getting bus time data.");
 			throw new TimeBusException("Error");
 		}
-	    
+		
 		return null;
-		
+
 	}
-	
-	
-	@Override
-	public BusData getTimeBus(String accessToken, BusInfoProperties busInfo) throws TimeBusException {
-		
-		CloseableHttpClient client = HttpClientBuilder.create().build();
 
-		HttpPost httpPost = new HttpPost(timeBusUrl);
-		
-		JSONObject bodyRequest = getBodyRequest();
-
-		try {
-
-			StringEntity entity = new StringEntity(bodyRequest.toString());
-		    httpPost.setEntity(entity);
-		    
-		    httpPost.setHeader("accessToken", accessToken);
-		    httpPost.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-		    
-		    CloseableHttpResponse response = client.execute(httpPost);
-			
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-
-				String bodyAsString = EntityUtils.toString(response.getEntity());
-				
-				BusData busTimeData = new ObjectMapper().readValue(bodyAsString, BusData.class);
-				
-				client.close();
-				
-				return busTimeData;
-			}
-  
-		} catch (IOException e) {
-			
-			logger.error("Error getting bus time data.");
-			throw new TimeBusException("Error");
-		}
-	    
-		return null;
-		
-	}
-	
-	
 	private JSONObject getBodyRequest() throws TimeBusException {
-		
+
 		JSONObject bodyRequest = null;
 
 		try {
