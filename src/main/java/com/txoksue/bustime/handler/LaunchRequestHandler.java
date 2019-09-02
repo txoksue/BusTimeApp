@@ -39,7 +39,7 @@ public class LaunchRequestHandler implements RequestHandler {
 	@Override
 	public Optional<Response> handle(HandlerInput input) {
 
-		logger.info("Managing launch request.");
+		logger.info("Handling LaunchRequest.");
 
 		AttributesManager attributesManager = input.getAttributesManager();
 		Map<String, Object> sessionAttributes = attributesManager.getSessionAttributes();
@@ -61,7 +61,7 @@ public class LaunchRequestHandler implements RequestHandler {
 				sessionAttributes.put("accessToken", accessToken);
 
 				String repromptText = "";
-				String text = "Bienvenido a Tiempo bus. ¿En qué puedo ayudarte?";
+				String text = "Bienvenido a Tiempo Bus. ¿En qué puedo ayudarte?";
 
 				return input.getResponseBuilder().withSpeech(text).withReprompt("Hola").withShouldEndSession(false)
 						.build();
