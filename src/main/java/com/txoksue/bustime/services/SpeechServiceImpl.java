@@ -38,13 +38,13 @@ public class SpeechServiceImpl implements SpeechService {
 			
 			}else if (minutes > 10) {
 
-				String coletilla = (minutes > 12)? "todavía tienes tiempo pero no te duermas." : "date prisa, mueve tu culo.";
+				String coletilla = (minutes > 12)? "todavía tienes tiempo pero no te duermas." : "Date prisa, mueve el culo.";
 				
-				speechTimeArrive = "Te quedan " + minutes + " minutos, " + coletilla;
+				speechTimeArrive = "Te quedan " + minutes + " minutos. " + coletilla;
 			
 			}else {
 				
-				speechTimeArrive = "Lo has perdido. La próxima vez muévete más rápido.";
+				speechTimeArrive = "Te quedan " + minutes + " minutos. Eso significa que lo has perdido. La próxima vez muévete más rápido.";
 			}
 			
 			speechText.append(speechTimeArrive).append(" ");

@@ -1,6 +1,7 @@
 package com.txoksue.bustime.handler;
 
 import static com.amazon.ask.request.Predicates.intentName;
+
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +26,7 @@ public class HelpIntentHandler implements IntentRequestHandler {
 		
 		logger.info("Handling HelpIntent");
 		
-		return input.getResponseBuilder().withSpeech("Puedes preguntarme sobre el tiempo de llegada de los autobuses de la <say-as interpret-as=\"spell-out\">EMT</say-as>. Pero ten en cuenta, que sólo conozco el 175 y 178 de momento.").withShouldEndSession(false).build();
+		return input.getResponseBuilder().withSpeech("Puedes preguntarme sobre el tiempo de llegada de los autobuses de la <say-as interpret-as=\"spell-out\">EMT</say-as>. Pero ten en cuenta, que de momento sólo tengo información de los autobuses 175 y 178 para sus paradas en el Hospital Ramón y Cajal.").withShouldEndSession(false).build();
 	}
 
 }

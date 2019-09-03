@@ -24,7 +24,7 @@ public class CancelandStopIntentHandler implements RequestHandler {
 		
 		logger.info("Handling CancelandStopIntent.");
 		
-		String speechText = "Venga hasta luego.";
+		String speechText = "<say-as interpret-as=\"interjection\">Hasta luego.</say-as>";
 		return input.getResponseBuilder().withSpeech(speechText).withShouldEndSession(true).build();
 	}
 

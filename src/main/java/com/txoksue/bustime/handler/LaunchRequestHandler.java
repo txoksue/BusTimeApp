@@ -63,7 +63,7 @@ public class LaunchRequestHandler implements RequestHandler {
 				String repromptText = "";
 				String text = "Bienvenido a Tiempo Bus. ¿En qué puedo ayudarte?";
 
-				return input.getResponseBuilder().withSpeech(text).withReprompt("Hola").withShouldEndSession(false)
+				return input.getResponseBuilder().withSpeech(text).withShouldEndSession(false)
 						.build();
 			}
 
