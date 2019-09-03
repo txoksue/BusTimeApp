@@ -41,12 +41,13 @@ public class BusTimeIntentHandler implements IntentRequestHandler {
 
 	@Override
 	public boolean canHandle(HandlerInput input, IntentRequest intentRequest) {
+	
 		return input.matches(intentName("BusTimeIntent"));
 	}
 
 	@Override
 	public Optional<Response> handle(HandlerInput input, IntentRequest intentRequest) {
-		
+
 		logger.info("Handling BusTimeIntent.");
 
 		AttributesManager attributesManager = input.getAttributesManager();
@@ -55,39 +56,39 @@ public class BusTimeIntentHandler implements IntentRequestHandler {
 
 		String accessToken = (String) sessionAttributes.get("accessToken");
 
-		logger.info("Token from session attributes: {}", accessToken);
+		logger.info("Getting token from session attributes: {}", accessToken);
 
 		RequestHelper requestHelper = RequestHelper.forHandlerInput(input);
 
 		Optional<String> busNumber = requestHelper.getSlotValue("bus_number");
+		
+		busNumber.ifPresent(b -> logger.info("Slot: {}", b));
+
+		List<BusData> timesBusData = new ArrayList<>();
 
 		if (busNumber.isPresent()) {
+			
+			logger.info ("Trying to get time arrive for bus provided as slot: {}", busNumber.get());
 
-			logger.info("Slot: {}", busNumber.get());
-
-			//Parsing busInfoProperties object inside session attributes
+			// Parsing busInfoProperties object inside session attributes
 			BusInfoProperties busInfoProperties = mapper.convertValue(sessionAttributes.get("busInfoProperties"),
-					new TypeReference<BusInfoProperties>() {});
+					new TypeReference<BusInfoProperties>() {
+					});
 
 			logger.info(busInfoProperties.toString());
 
 			Optional<Bus> bus = busInfoProperties.getBus().stream()
 					.filter(b -> b.getNumber().equals(Integer.valueOf(busNumber.get()))).findFirst();
-			
-			List<BusData> timesBusData = new ArrayList<>();
+
 
 			if (bus.isPresent()) {
-				
-				logger.info("Trying to get time arrival for bus: {}", bus.get().getNumber());
 
 				bus.get().getStops().forEach(stop -> {
 
-					BusData timeBus;
-
 					try {
 
-						timeBus = emtRestService.getTimeArrivalBus(accessToken, stop, bus.get().getNumber());
-						
+						BusData timeBus = emtRestService.getTimeArrivalBus(accessToken, stop, bus.get().getNumber());
+
 						logger.info("Time arrival bus info: {}", timeBus.toString());
 
 						timesBusData.add(timeBus);
@@ -96,25 +97,44 @@ public class BusTimeIntentHandler implements IntentRequestHandler {
 
 						logger.error(e.getMessage());
 					}
-
 				});
+
 			}
+			
+		} else {
+			
+			logger.info ("Trying to get time arrive for default bus 175.");
 
-			if (!timesBusData.isEmpty()) {
+			try {
 
-				logger.info("INFORMACION RECUPERADA");
+				BusData timeBus = emtRestService.getTimeArrivalBus(accessToken, 955, 175);
 
-				String speechText = speechService.buildSpeechEstimateArrive(timesBusData);
+				logger.info("Time arrival bus info: {}", timeBus.toString());
 
-				logger.info(speechText);
+				timesBusData.add(timeBus);
 
-				return input.getResponseBuilder().withSpeech(speechText).withReprompt("¿Necesitas más ayuda?").withShouldEndSession(false).build();
+			} catch (TimeBusException e) {
 
-			} else {
-
-				logger.error("No se ha podido recuperar la información sobre el bus.");
+				logger.error(e.getMessage());
 			}
 		}
+
+		if (!timesBusData.isEmpty()) {
+
+			logger.info("Trying to build speech text.");
+
+			String speechText = speechService.buildSpeechEstimateArrive(timesBusData);
+
+			logger.info("Speech text: {}", speechText);
+
+			return input.getResponseBuilder().withSpeech(speechText)
+					.withShouldEndSession(false).build();
+
+		} else {
+
+			logger.error("No se ha podido recuperar la información sobre el bus.");
+		}
+		
 
 		return input.getResponseBuilder().withSpeech(SPEECH_ERROR).withShouldEndSession(false).build();
 	}
