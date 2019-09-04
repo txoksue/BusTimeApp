@@ -1,16 +1,19 @@
-package com.txoksue.bustime.model;
+package com.txoksue.bustime.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @NoArgsConstructor
 @ToString
-public class ArriveBusTime {
+@Setter
+@Getter
+public class ArriveBusTimeDTO {
 	
 	@JsonProperty
 	private Integer distanceBus;
@@ -39,88 +42,4 @@ public class ArriveBusTime {
 	@JsonProperty
 	private Integer estimateArrive;
 
-	@JsonGetter
-	public Boolean getIsHead() {
-		return isHead;
-	}
-
-	public void setIsHead(Boolean isHead) {
-		this.isHead = isHead;
-	}
-
-	@JsonGetter
-	public String getDestination() {
-		return destination;
-	}
-
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
-
-	@JsonGetter
-	public String getStop() {
-		return stop;
-	}
-
-	public void setStop(String stop) {
-		this.stop = stop;
-	}
-
-	@JsonGetter
-	public String getLine() {
-		return line;
-	}
-
-	public void setLine(String line) {
-		this.line = line;
-	}
-
-	@JsonGetter
-	public Integer getEstimateArrive() {
-		return estimateArrive;
-	}
-
-	public void setEstimateArrive(Integer estimateArrive) {
-		this.estimateArrive = estimateArrive;
-	}
-
-	@JsonGetter
-	public Integer getDistanceBus() {
-		return distanceBus;
-	}
-
-	public void setDistanceBus(Integer distanceBus) {
-		this.distanceBus = distanceBus;
-	}
-
-	@JsonGetter
-	public Object getGeometry() {
-		return geometry;
-	}
-
-	public void setGeometry(Object geometry) {
-		this.geometry = geometry;
-	}
-
-	@JsonGetter
-	public String getBus() {
-		return bus;
-	}
-
-	public void setBus(String bus) {
-		this.bus = bus;
-	}
-
-	@JsonGetter
-	public String getPositionTypeBus() {
-		return positionTypeBus;
-	}
-
-	public void setPositionTypeBus(String positionTypeBus) {
-		this.positionTypeBus = positionTypeBus;
-	}
-	
-	
-	
-	
 }

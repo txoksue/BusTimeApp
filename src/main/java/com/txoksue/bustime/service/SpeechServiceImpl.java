@@ -1,18 +1,18 @@
-package com.txoksue.bustime.services;
+package com.txoksue.bustime.service;
 
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.txoksue.bustime.model.BusData;
+import com.txoksue.bustime.model.dto.BusDTO;
 
 public class SpeechServiceImpl implements SpeechService {
 	
 	private static final Logger logger = LogManager.getLogger(SpeechServiceImpl.class);
 
 	@Override
-	public String buildSpeechEstimateArrive(List<BusData> timeBusData) {
+	public String buildSpeechEstimateArrive(List<BusDTO> timeBusData) {
 		
 		logger.info("Building speech text with estimate arrive bus info.");
 		

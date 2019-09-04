@@ -1,4 +1,4 @@
-package com.txoksue.bustime.services;
+package com.txoksue.bustime.service;
 
 import java.io.InputStream;
 

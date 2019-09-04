@@ -1,30 +1,23 @@
-package com.txoksue.bustime.model;
+package com.txoksue.bustime.model.dto;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
 @ToString
-public class ArriveInfo {
+@Getter 
+@Setter
+public class ArriveInfoDTO {
 	
 	@JsonProperty("Arrive")
-	private List<ArriveBusTime> busTimes;
-
-	public List<ArriveBusTime> getBusTimes() {
-		return busTimes;
-	}
-
-	public void setBusTimes(List<ArriveBusTime> busTimes) {
-		this.busTimes = busTimes;
-	}
-	
-	
-	
+	private List<ArriveBusTimeDTO> busTimes;
 }

@@ -23,8 +23,8 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.txoksue.bustime.exception.TimeBusException;
-import com.txoksue.bustime.model.BusData;
-import com.txoksue.bustime.model.TokenData;
+import com.txoksue.bustime.model.dto.AccessTokenDTO;
+import com.txoksue.bustime.model.dto.BusDTO;
 
 public class EMTRestServiceImpl implements EMTRestService {
 
@@ -67,7 +67,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 
-				TokenData tokenData = new ObjectMapper().readValue(bodyAsString, TokenData.class);
+				AccessTokenDTO tokenData = new ObjectMapper().readValue(bodyAsString, AccessTokenDTO.class);
 
 				client.close();
 				
@@ -86,7 +86,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 	}
 
 	@Override
-	public BusData getTimeArrivalBus(String accessToken, Integer stop, Integer busNumber) throws TimeBusException {
+	public BusDTO getTimeArrivalBus(String accessToken, Integer stop, Integer busNumber) throws TimeBusException {
 		
 		logger.info("Getting time arrival bus information.");
 
@@ -118,7 +118,7 @@ public class EMTRestServiceImpl implements EMTRestService {
 
 				String bodyAsString = EntityUtils.toString(response.getEntity());
 
-				BusData busTimeData = new ObjectMapper().readValue(bodyAsString, BusData.class);
+				BusDTO busTimeData = new ObjectMapper().readValue(bodyAsString, BusDTO.class);
 
 				client.close();
 				

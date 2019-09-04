@@ -18,8 +18,8 @@ import com.txoksue.bustime.api.EMTRestService;
 import com.txoksue.bustime.api.EMTRestServiceImpl;
 import com.txoksue.bustime.exception.TimeBusException;
 import com.txoksue.bustime.model.BusInfoProperties;
-import com.txoksue.bustime.services.LoadYamlService;
-import com.txoksue.bustime.services.LoadYamlServiceImpl;
+import com.txoksue.bustime.service.LoadYamlService;
+import com.txoksue.bustime.service.LoadYamlServiceImpl;
 
 public class LaunchRequestHandler implements RequestHandler {
 
@@ -28,7 +28,7 @@ public class LaunchRequestHandler implements RequestHandler {
 	private static final String SPEECH_ERROR = "Ahora mismo no te puedo ayudar. Alguien ha pisado un cable.";
 
 	private LoadYamlService loadYamlService = new LoadYamlServiceImpl();
-	
+
 	private EMTRestService emtRestService = new EMTRestServiceImpl();
 
 	@Override
@@ -43,11 +43,11 @@ public class LaunchRequestHandler implements RequestHandler {
 
 		AttributesManager attributesManager = input.getAttributesManager();
 		Map<String, Object> sessionAttributes = attributesManager.getSessionAttributes();
-		
+
 		BusInfoProperties busPoperties = loadYamlService.loadBusInfo();
-		
+
 		logger.info(busPoperties.toString());
-		
+
 		sessionAttributes.put("busInfoProperties", busPoperties);
 
 		try {
@@ -61,10 +61,9 @@ public class LaunchRequestHandler implements RequestHandler {
 				sessionAttributes.put("accessToken", accessToken);
 
 				String repromptText = "";
-				String text = "Bienvenido a Tiempo Bus. ¿En qué puedo ayudarte?";
+				String text = "Bienvenido a Tiempo Bus. Tiempo Bus te proporciona información sobre el tiempo de llegada de los autobuses de la <say-as interpret-as=\"spell-out\">EMT</say-as> a una parada en concreto. Pero ten en cuenta, que de momento sólo tengo información de los autobuses 175 y 178 para sus paradas en el Hospital Ramón y Cajal. Además puedes pedir ayuda en cualquier momento y estaré encantada de ayudarte. ¿Qué quieres hacer ahora?";
 
-				return input.getResponseBuilder().withSpeech(text).withShouldEndSession(false)
-						.build();
+				return input.getResponseBuilder().withSpeech(text).withShouldEndSession(false).build();
 			}
 
 		} catch (TimeBusException e) {

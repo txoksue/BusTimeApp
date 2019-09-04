@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.txoksue.bustime.model.TokenData;
+import com.txoksue.bustime.model.dto.AccessTokenDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EMTRestServiceImplTest {
@@ -34,7 +34,7 @@ public class EMTRestServiceImplTest {
 		
 		try {
 			
-			TokenData response = objectMapper.readValue(JSON_EXAMPLE, TokenData.class);
+			AccessTokenDTO response = objectMapper.readValue(JSON_EXAMPLE, AccessTokenDTO.class);
 			
 			assertNotNull(response);
 			

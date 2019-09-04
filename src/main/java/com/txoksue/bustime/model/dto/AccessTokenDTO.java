@@ -1,4 +1,4 @@
-package com.txoksue.bustime.model;
+package com.txoksue.bustime.model.dto;
 
 import java.util.List;
 
@@ -12,23 +12,19 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class TokenData {
+public class AccessTokenDTO {
 
 	@JsonProperty("data")
-	private List<UserInfo> users;
+	private List<UserInfoDTO> users;
 
 	@JsonGetter("users")
-	public List<UserInfo> getUsers() {
+	public List<UserInfoDTO> getUsers() {
 		return users;
 	}
 	
 	@JsonSetter("users")
-	public void setUsers(List<UserInfo> users) {
+	public void setUsers(List<UserInfoDTO> users) {
 		this.users = users;
 	}
-	
-	
-	
-
 
 }
